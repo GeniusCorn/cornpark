@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html><head>
+<title>基于 Docker 部署极简服务</title>
+
+
+
+
+<meta charset="utf-8">
+<meta name="X-UA-Compatible" content="IE=edge">
+<meta name="google-site-verification" content="">
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+<meta content="telephone=no" name="format-detection">
+<meta name="description" content="">
+<meta name="renderer" content="webkit">
+<meta name="theme-color" content="#ffffff">
+
+
+
+
+
+
+
+
+
+
+
+<link type="text/css" rel="stylesheet" href="/vendor/css/bootstrap.min.css">
+
+
+  
+
+
+
+
+<link rel="icon" href="https://www.nicecorn.com/av.png">
+
+
+
+<link rel="stylesheet" href="https://www.nicecorn.com/scss/journal.min.c5d92f380bf10f6849c7ac487c7df2b22c081e0851e5339224f1ae29210b20d2.css" integrity="sha256-xdkvOAvxD2hJx6xIfH3ysiwIHghR5TOSJPGuKSELINI=" media="screen">
+
+
+
+<link rel="stylesheet" href="https://www.nicecorn.com/scss/dark-mode.min.9f8d8c2df9285089d141edd4a50cb7506c7948e6ab79a29968dced1bd0ab7d22.css" integrity="sha256-n42MLfkoUInRQe3UpQy3UGx5SOareaKZaNztG9CrfSI=" media="screen">
+
+
+<script src="/vendor/js/loadCSS.js"></script>
+<script>
+  loadCSS("https://fonts.googleapis.com/css?family=Fira+Mono|Material+Icons");
+</script>
+
+
+
+
+
+
+  <script src="/js/toc.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+<body>
+    	<div id="app"><div id="sideContainer" class="side-container">
+    
+    <a class="a-block nav-head false" href="https://www.nicecorn.com">
+    
+        <div class="nav-title">
+            Corn Park
+        </div>
+        
+        <div class="nav-subtitle">
+            玉之米的自留地
+        </div>
+        
+    </a>
+
+    <div class="nav-link-list">
+        
+        
+            
+            
+            
+                
+            
+            
+            
+            <a class="a-block nav-link-item active" href="/posts">
+                歸檔
+            </a>
+            
+        
+            
+            
+            
+            
+            
+            <a class="a-block nav-link-item false" href="/tags">
+                標簽
+            </a>
+            
+        
+            
+            
+            
+            
+            
+            <a class="a-block nav-link-item false" href="/about">
+                关于
+            </a>
+            
+        
+            
+            
+            
+            
+            
+            <a class="a-block nav-link-item false" href="/index.xml">
+                RSS
+            </a>
+            
+        
+    </div>
+
+    
+
+    <div class="nav-footer">
+        
+
+
+&copy;  Corn Huang
+<a href="https://beian.miit.gov.cn/">粤 ICP 备 20026972 号 - 1</a>
+
+
+    </div>
+    
+</div><div id="extraContainer" class="extra-container">
+    
+    
+    <div class="toc animated-visibility" :class="{ invisible: scrollY <= 140 }">
+
+
+	<div class="toc-content">
+	
+		
+		
+		
+		<center>- 目錄 -</center>
+		
+		
+		<ul>
+			
+				
+				
+					
+						
+						
+						
+						
+							
+								
+									<ul>
+								
+							
+						
+						
+							<li>
+								<a href="#%e5%b0%86%e8%b5%84%e6%ba%90%e6%9c%8d%e5%8a%a1%e5%8c%96" onclick="onNavClick(`#将资源服务化-nav`)" id="将资源服务化-nav">
+									将资源服务化
+								</a>
+							</li>
+						
+						
+					
+				
+			
+				
+				
+					
+						
+						
+						
+						
+						
+							<li>
+								<a href="#dockerfile" onclick="onNavClick(`#dockerfile-nav`)" id="dockerfile-nav">
+									Dockerfile
+								</a>
+							</li>
+						
+						
+					
+				
+			
+				
+				
+					
+						
+						
+						
+						
+						
+							<li>
+								<a href="#%e6%9e%84%e5%bb%ba%e9%95%9c%e5%83%8f" onclick="onNavClick(`#构建镜像-nav`)" id="构建镜像-nav">
+									构建镜像
+								</a>
+							</li>
+						
+						
+					
+				
+			
+				
+				
+					
+						
+						
+						
+						
+						
+							<li>
+								<a href="#%e8%bf%90%e8%a1%8c%e5%ae%b9%e5%99%a8" onclick="onNavClick(`#运行容器-nav`)" id="运行容器-nav">
+									运行容器
+								</a>
+							</li>
+						
+						
+					
+				
+			
+				
+				
+					
+						
+						
+						
+						
+						
+							<li>
+								<a href="#docker-compose" onclick="onNavClick(`#docker-compose-nav`)" id="docker-compose-nav">
+									Docker Compose
+								</a>
+							</li>
+						
+						
+					
+				
+			
+		</ul>
+	</div>
+
+</div>
+    
+    <div class="pagination">
+        <a id="globalBackToTop" class="pagination-action animated-visibility" href="#top" :class="{ invisible: scrollY == 0 }">
+            <i class="material-icons pagination-action-icon">
+                keyboard_arrow_up
+            </i>
+        </a>
+        
+        <a type="button" class="pagination-action" id="darkModeToggleButton">
+            <span class="material-icons pagination-action-icon" id="darkModeToggleIcon">
+                dark_mode
+            </span>
+        </a>
+        
+        
+    </div>
+</div>
+<div class="single-column-drawer-container" id="drawer"
+     v-bind:class="{ 'single-column-drawer-container-active': isDrawerOpen }">
+    <div class="drawer-content">
+        <div class="drawer-menu">
+            
+            
+            
+                
+                
+                
+                    
+                
+                
+                
+                <a class="a-block drawer-menu-item active" href="/posts">
+                    歸檔
+                </a>
+                
+            
+                
+                
+                
+                
+                
+                <a class="a-block drawer-menu-item false" href="/tags">
+                    標簽
+                </a>
+                
+            
+                
+                
+                
+                
+                
+                <a class="a-block drawer-menu-item false" href="/about">
+                    关于
+                </a>
+                
+            
+                
+                
+                
+                
+                
+                <a class="a-block drawer-menu-item false" href="/index.xml">
+                    RSS
+                </a>
+                
+            
+            
+            <div class="toc">
+
+
+	<div class="toc-content">
+	
+		
+		
+		
+		<center>- 目錄 -</center>
+		
+		
+		<ul>
+			
+				
+				
+					
+						
+						
+						
+						
+							
+								
+									<ul>
+								
+							
+						
+						
+							<li>
+								<a href="#%e5%b0%86%e8%b5%84%e6%ba%90%e6%9c%8d%e5%8a%a1%e5%8c%96" onclick="onNavClick(`#将资源服务化-nav`)" id="将资源服务化-nav">
+									将资源服务化
+								</a>
+							</li>
+						
+						
+					
+				
+			
+				
+				
+					
+						
+						
+						
+						
+						
+							<li>
+								<a href="#dockerfile" onclick="onNavClick(`#dockerfile-nav`)" id="dockerfile-nav">
+									Dockerfile
+								</a>
+							</li>
+						
+						
+					
+				
+			
+				
+				
+					
+						
+						
+						
+						
+						
+							<li>
+								<a href="#%e6%9e%84%e5%bb%ba%e9%95%9c%e5%83%8f" onclick="onNavClick(`#构建镜像-nav`)" id="构建镜像-nav">
+									构建镜像
+								</a>
+							</li>
+						
+						
+					
+				
+			
+				
+				
+					
+						
+						
+						
+						
+						
+							<li>
+								<a href="#%e8%bf%90%e8%a1%8c%e5%ae%b9%e5%99%a8" onclick="onNavClick(`#运行容器-nav`)" id="运行容器-nav">
+									运行容器
+								</a>
+							</li>
+						
+						
+					
+				
+			
+				
+				
+					
+						
+						
+						
+						
+						
+							<li>
+								<a href="#docker-compose" onclick="onNavClick(`#docker-compose-nav`)" id="docker-compose-nav">
+									Docker Compose
+								</a>
+							</li>
+						
+						
+					
+				
+			
+		</ul>
+	</div>
+
+</div>
+            
+        </div>
+    </div>
+</div>
+<transition name="fade">
+    <div id="drawer-mask" v-bind:class="{ 'single-column-drawer-mask': mounted }" v-if="isDrawerOpen" v-on:click="toggleDrawer"></div>
+</transition>
+<nav id="navBar" class="navbar sticky-top navbar-light single-column-nav-container">
+    <div id="navBackground" class="nav-background"></div>
+    <div class="container container-narrow nav-content">
+        <button id="nav_dropdown_btn" class="nav-dropdown-toggle" type="button" v-on:click="toggleDrawer">
+            <i class="material-icons">
+                menu
+            </i>
+        </button>
+        <a id="navTitle" class="navbar-brand" href="https://www.nicecorn.com">
+            Corn Park
+        </a>
+        
+        <button type="button" class="nav-darkmode-toggle" id="darkModeToggleButton2">
+            <i class="material-icons" id="darkModeToggleIcon2">
+                dark_mode
+            </i>
+        </button>
+        
+    </div>
+</nav>
+<div class="single-column-header-container" id="pageHead"
+     v-bind:style="{ transform: 'translateZ(0px) translateY('+.3*scrollY+'px)', opacity: 1-navOpacity }">
+    <a href="https://www.nicecorn.com">
+        <div class="single-column-header-title">Corn Park</div>
+        
+        <div class="single-column-header-subtitle">玉之米的自留地</div>
+        
+
+    </a>
+</div>
+
+            <div id="content">
+                <div id="streamContainer" class="stream-container">
+
+    <div class="post-list-container post-list-container-shadow">
+        <div class="post">
+            
+            
+            
+
+            <div class="post-head-wrapper-text-only"
+                
+            >
+                <div class="post-title">
+                    基于 Docker 部署极简服务
+                    
+                    <div class="post-meta">
+                        
+                        <time itemprop="datePublished">
+                            2022-06-20 00:00
+                        </time>
+                        
+
+                        
+
+                        
+                            <i class="material-icons" style="">label</i>
+                            
+                                <a href="/tags/%E5%89%8D%E7%AB%AF%E9%83%A8%E7%BD%B2">前端部署</a>
+                                &nbsp;
+                            
+                                <a href="/tags/%E5%89%8D%E7%AB%AF">前端</a>
+                                &nbsp;
+                            
+                        
+                        
+                    </div>
+                </div>
+            </div>
+            
+            <div class="post-body-wrapper">
+                
+                <div class="post-body" v-pre>
+                
+                    <p>上文我们部署了一个简单的静态资源服务器。前端流行的部署方案都是使用 <code>Docker</code> 进行部署。这篇文章我们就使用 Docker 将该服务容器化。</p>
+<h2 id="将资源服务化">将资源服务化</h2>
+<p>先借助一个工具 <code>serve</code> 将静态资源服务化。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>pnpm add serve
+</span></span></code></pre></div><p>通过 <code>npm scripts</code> 把 <code>serve</code> 命令封装成 <code>npm start</code>。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-json" data-lang="json"><span style="display:flex;"><span><span style="color:#e6db74">&#34;scripts&#34;</span><span style="color:#960050;background-color:#1e0010">:</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;start&#34;</span>: <span style="color:#e6db74">&#34;serve .&#34;</span>
+</span></span><span style="display:flex;"><span>  }
+</span></span></code></pre></div><p>执行 <code>pnpm start</code>，<code>serve</code> 服务默认运行在 <code>3000</code> 端口，打开浏览器验证服务正常运行。</p>
+<h2 id="dockerfile">Dockerfile</h2>
+<p>一般来说，根据以下步骤可以将脚本命令转化为 Dockerfile。</p>
+<ol>
+<li>选择一个基础镜像。在 <a href="https://hub.docker.com">Docker Hub</a> 中查找我们需要的镜像。我们的服务基于 <code>node</code> 部署，因此我们选择 <code>node:18-alpine3.15</code> 作为基础镜像。该镜像基于 <code>alpine</code> 制作，内置了 <code>node</code>、<code>npm</code>、<code>yarn</code> 等运行环境。</li>
+<li>将以上的脚本命令放在 <code>RUN</code> 命令中。</li>
+<li>启动服务命令放在 <code>CMD</code> 命令中。</li>
+</ol>
+<p><code>node.dockerfile</code> 文件如下：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-dockerfile" data-lang="dockerfile"><span style="display:flex;"><span><span style="color:#75715e"># 选择一个基础镜像</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">FROM</span><span style="color:#e6db74"> node:18-alpine</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#75715e"># 设置工作目录，以下 RUN/CMD 命令都在该目录下执行</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">WORKDIR</span><span style="color:#e6db74"> /code</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#75715e"># 把根目录下的文件置于镜像中</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">ADD</span> . /code<span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#75715e"># 安装依赖</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">RUN</span> yarn<span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#75715e"># 开放端口为 3000</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">EXPOSE</span><span style="color:#e6db74"> 3000</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#75715e"># 启动 node 服务</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">CMD</span> npm start<span style="color:#960050;background-color:#1e0010">
+</span></span></span></code></pre></div><h2 id="构建镜像">构建镜像</h2>
+<p>接下来使用 <code>docker build</code> 命令基于 <code>dockerfile</code> 构建镜像。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#75715e"># 构建一个名为 simple-deploy 的镜像</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># -t 指定镜像名称</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># -f 指定 dockerfile</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># . 为该目录</span>
+</span></span><span style="display:flex;"><span>docker build -t simple-deploy -f node.dockerfile .
+</span></span></code></pre></div><p>稍作等待镜像构建成功。从控制台输出的信息得知，本次构建时长为 <code>55.8s</code>。通过 <code>docker images</code> 可知镜像体积为 <code>194MB</code>。留意这个数字，以后优化镜像体积时用得到。</p>
+<h2 id="运行容器">运行容器</h2>
+<p>我们可以基于镜像运行若干个容器，接下来要启动的容器是我们最终要提供的静态服务。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#75715e"># 使用该镜像运行容器</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># -d 在后台运行</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># --rm 当容器停止运行时自动删除容器</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># -p 3000:3000 将容器中的 3000 端口映射到宿主机的 3000 端口</span>
+</span></span><span style="display:flex;"><span>docker run --rm -p 3000:3000 simple-deploy
+</span></span></code></pre></div><p>此时使用 <code>docker ps</code> 命令可以查看正在运行的容器及其信息。</p>
+<p><img src="2022-06-20_23-54-08.png" alt=""></p>
+<p>此时，在宿主机访问 <code>3000</code> 端口成功访问服务。</p>
+<h2 id="docker-compose">Docker Compose</h2>
+<p>然而，通过命令行方式来构建容器，进行管理端口、存储变量的操作始终不便且不易维护。</p>
+<p><code>Docker Compose</code> 是一个定义并运行多容器的 Docker 应用。我们使用其将 Docker Cli 部分翻译为使用 <code>YML</code> 的后缀文件作为 <code>Docker Compose</code> 的配置文件。</p>
+<p>该服务的 <code>docker-compose.yml</code> 文件如下。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-yml" data-lang="yml"><span style="display:flex;"><span><span style="color:#f92672">version</span>: <span style="color:#e6db74">&#39;3.9&#39;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">services</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">simple-deploy</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># 选取当前路径</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">build</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">context</span>: <span style="color:#ae81ff">.</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">dockerfile</span>: <span style="color:#ae81ff">node.dockerfile</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># 映射端口</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">ports</span>:
+</span></span><span style="display:flex;"><span>      - <span style="color:#ae81ff">3000</span>:<span style="color:#ae81ff">3000</span>
+</span></span></code></pre></div><p>配置完成，可以通过一行 <code>docker compose up</code> 来启动容器。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#75715e"># --build 每次启动容器前构建镜像</span>
+</span></span><span style="display:flex;"><span>docker compose up --build
+</span></span></code></pre></div><p>此时在浏览器访问 <code>3000</code> 端口，服务正常运行。</p>
+<p>至此，我们使用 <code>Docker</code> 和 <code>Docker Compose</code> 部署了极简服务。</p>
+
+                    
+                    <HR width="100%" id="EOF">
+		    <p style="color:#777;">上次修改於 2022-06-20</p>
+                    
+                </div>
+            </div>
+            
+            
+            <nav class="post-pagination">
+
+                
+                <a class="newer-posts" href="https://www.nicecorn.com/posts/css/%E9%80%89%E6%8B%A9%E5%99%A8%E7%9A%84%E4%BC%98%E5%85%88%E7%BA%A7/">
+			下回<br>选择器的优先级
+                </a>
+                
+                
+                
+                <a class="older-posts" href="https://www.nicecorn.com/posts/javascript/%E7%AE%AD%E5%A4%B4%E5%87%BD%E6%95%B0/">
+			上回<br>箭头函数
+                </a>
+                
+            </nav>
+            <div class="post-comment-wrapper">
+                
+
+
+
+
+
+
+
+
+
+
+            </div>
+        </div>
+    </div>
+
+
+                    </div>
+            </div><div id="single-column-footer">
+
+
+&copy;  Corn Huang
+<a href="https://beian.miit.gov.cn/">粤 ICP 备 20026972 号 - 1</a>
+
+</div>
+            </div>
+    
+    <script src="/js/journal.js"></script>
+    </body>
+</html>

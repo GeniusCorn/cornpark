@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>前端部署 on Corn Park</title>
+    <link>https://www.nicecorn.com/tags/%E5%89%8D%E7%AB%AF%E9%83%A8%E7%BD%B2/</link>
+    <description>Recent content in 前端部署 on Corn Park</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-hant</language>
+    <copyright>Corn Huang</copyright>
+    <lastBuildDate>Mon, 20 Jun 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://www.nicecorn.com/tags/%E5%89%8D%E7%AB%AF%E9%83%A8%E7%BD%B2/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>手写最简静态资源服务器</title>
+      <link>https://www.nicecorn.com/posts/%E5%89%8D%E7%AB%AF%E9%83%A8%E7%BD%B2/1.-%E6%89%8B%E5%86%99%E6%9C%80%E7%AE%80%E9%9D%99%E6%80%81%E8%B5%84%E6%BA%90%E6%9C%8D%E5%8A%A1%E5%99%A8/</link>
+      <pubDate>Mon, 20 Jun 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.nicecorn.com/posts/%E5%89%8D%E7%AB%AF%E9%83%A8%E7%BD%B2/1.-%E6%89%8B%E5%86%99%E6%9C%80%E7%AE%80%E9%9D%99%E6%80%81%E8%B5%84%E6%BA%90%E6%9C%8D%E5%8A%A1%E5%99%A8/</guid>
+      <description>一个简单的网页 在开始部署一个静态资源服务器之前，我们需要先写一个简单的网页供浏览。
+&amp;lt;!DOCTYPE html&amp;gt; &amp;lt;html lang=&amp;#34;en&amp;#34;&amp;gt; &amp;lt;head&amp;gt; &amp;lt;meta charset=&amp;#34;UTF-8&amp;#34; /&amp;gt; &amp;lt;meta http-equiv=&amp;#34;X-UA-Compatible&amp;#34; content=&amp;#34;IE=edge&amp;#34; /&amp;gt; &amp;lt;meta name=&amp;#34;viewport&amp;#34; content=&amp;#34;width=device-width, initial-scale=1.0&amp;#34; /&amp;gt; &amp;lt;title&amp;gt;Hello World&amp;lt;/title&amp;gt; &amp;lt;/head&amp;gt; &amp;lt;body&amp;gt; &amp;lt;h1&amp;gt; hello, world &amp;lt;/h1&amp;gt; &amp;lt;/body&amp;gt; &amp;lt;/html&amp;gt; HTTP HTTP 即超文本传输协议，是一个用于传输超文本文档（例如 HTML）的应用层协议。客户端打开一个连接以发送请求，然后等待直到收到服务器响应。最简部署即客户端向服务器发送一个 HTML 文件请求，服务器响应一段 HTML 资源。
+在浏览器中访问任意网页，可以自行查看网页的 HTTP 请求和响应报文。
+最简静态资源服务器：字符串 作为前端，我们使用 node 来搭建静态资源服务。该服务中，监听 3000 端口，在响应体中返回上文的网页。
+首先以字符串返回响应。
+在 node 中，写服务端的最重要模块为 node:http。通过 node: 前缀，可以指明其为内部模块，避免 node 内置模块与第三方模块的命名冲突。
+const http = require(&amp;#39;node:http&amp;#39;); 通过 http.createServer 可以向外提供 HTTP 服务。res.end() 可以设置 HTTP 报文的响应体。我们先简单响应一个字符串。
+const server = http.</description>
+    </item>
+    
+    <item>
+      <title>基于 Docker 部署极简服务</title>
+      <link>https://www.nicecorn.com/posts/%E5%89%8D%E7%AB%AF%E9%83%A8%E7%BD%B2/2.-%E5%9F%BA%E4%BA%8E-docker-%E9%83%A8%E7%BD%B2%E6%9E%81%E7%AE%80%E6%9C%8D%E5%8A%A1/</link>
+      <pubDate>Mon, 20 Jun 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.nicecorn.com/posts/%E5%89%8D%E7%AB%AF%E9%83%A8%E7%BD%B2/2.-%E5%9F%BA%E4%BA%8E-docker-%E9%83%A8%E7%BD%B2%E6%9E%81%E7%AE%80%E6%9C%8D%E5%8A%A1/</guid>
+      <description>上文我们部署了一个简单的静态资源服务器。前端流行的部署方案都是使用 Docker 进行部署。这篇文章我们就使用 Docker 将该服务容器化。
+将资源服务化 先借助一个工具 serve 将静态资源服务化。
+pnpm add serve 通过 npm scripts 把 serve 命令封装成 npm start。
+&amp;#34;scripts&amp;#34;: { &amp;#34;start&amp;#34;: &amp;#34;serve .&amp;#34; } 执行 pnpm start，serve 服务默认运行在 3000 端口，打开浏览器验证服务正常运行。
+Dockerfile 一般来说，根据以下步骤可以将脚本命令转化为 Dockerfile。
+选择一个基础镜像。在 Docker Hub 中查找我们需要的镜像。我们的服务基于 node 部署，因此我们选择 node:18-alpine3.15 作为基础镜像。该镜像基于 alpine 制作，内置了 node、npm、yarn 等运行环境。 将以上的脚本命令放在 RUN 命令中。 启动服务命令放在 CMD 命令中。 node.dockerfile 文件如下：
+# 选择一个基础镜像 FROM node:18-alpine # 设置工作目录，以下 RUN/CMD 命令都在该目录下执行 WORKDIR /code # 把根目录下的文件置于镜像中 ADD . /code # 安装依赖 RUN yarn # 开放端口为 3000 EXPOSE 3000 # 启动 node 服务 CMD npm start 构建镜像 接下来使用 docker build 命令基于 dockerfile 构建镜像。</description>
+    </item>
+    
+  </channel>
+</rss>

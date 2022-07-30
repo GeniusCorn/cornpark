@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+<html><head>
+<title>手写最简静态资源服务器</title>
+
+
+
+
+<meta charset="utf-8">
+<meta name="X-UA-Compatible" content="IE=edge">
+<meta name="google-site-verification" content="">
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+<meta content="telephone=no" name="format-detection">
+<meta name="description" content="">
+<meta name="renderer" content="webkit">
+<meta name="theme-color" content="#ffffff">
+
+
+
+
+
+
+
+
+
+
+
+<link type="text/css" rel="stylesheet" href="/vendor/css/bootstrap.min.css">
+
+
+  
+
+
+
+
+<link rel="icon" href="https://www.nicecorn.com/av.png">
+
+
+
+<link rel="stylesheet" href="https://www.nicecorn.com/scss/journal.min.c5d92f380bf10f6849c7ac487c7df2b22c081e0851e5339224f1ae29210b20d2.css" integrity="sha256-xdkvOAvxD2hJx6xIfH3ysiwIHghR5TOSJPGuKSELINI=" media="screen">
+
+
+
+<link rel="stylesheet" href="https://www.nicecorn.com/scss/dark-mode.min.9f8d8c2df9285089d141edd4a50cb7506c7948e6ab79a29968dced1bd0ab7d22.css" integrity="sha256-n42MLfkoUInRQe3UpQy3UGx5SOareaKZaNztG9CrfSI=" media="screen">
+
+
+<script src="/vendor/js/loadCSS.js"></script>
+<script>
+  loadCSS("https://fonts.googleapis.com/css?family=Fira+Mono|Material+Icons");
+</script>
+
+
+
+
+
+
+  <script src="/js/toc.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+<body>
+    	<div id="app"><div id="sideContainer" class="side-container">
+    
+    <a class="a-block nav-head false" href="https://www.nicecorn.com">
+    
+        <div class="nav-title">
+            Corn Park
+        </div>
+        
+        <div class="nav-subtitle">
+            玉之米的自留地
+        </div>
+        
+    </a>
+
+    <div class="nav-link-list">
+        
+        
+            
+            
+            
+                
+            
+            
+            
+            <a class="a-block nav-link-item active" href="/posts">
+                歸檔
+            </a>
+            
+        
+            
+            
+            
+            
+            
+            <a class="a-block nav-link-item false" href="/tags">
+                標簽
+            </a>
+            
+        
+            
+            
+            
+            
+            
+            <a class="a-block nav-link-item false" href="/about">
+                关于
+            </a>
+            
+        
+            
+            
+            
+            
+            
+            <a class="a-block nav-link-item false" href="/index.xml">
+                RSS
+            </a>
+            
+        
+    </div>
+
+    
+
+    <div class="nav-footer">
+        
+
+
+&copy;  Corn Huang
+<a href="https://beian.miit.gov.cn/">粤 ICP 备 20026972 号 - 1</a>
+
+
+    </div>
+    
+</div><div id="extraContainer" class="extra-container">
+    
+    
+    <div class="toc animated-visibility" :class="{ invisible: scrollY <= 140 }">
+
+
+	<div class="toc-content">
+	
+		
+		
+		
+		<center>- 目錄 -</center>
+		
+		
+		<ul>
+			
+				
+				
+					
+						
+						
+						
+						
+							
+								
+									<ul>
+								
+							
+						
+						
+							<li>
+								<a href="#%e4%b8%80%e4%b8%aa%e7%ae%80%e5%8d%95%e7%9a%84%e7%bd%91%e9%a1%b5" onclick="onNavClick(`#一个简单的网页-nav`)" id="一个简单的网页-nav">
+									一个简单的网页
+								</a>
+							</li>
+						
+						
+					
+				
+			
+				
+				
+					
+						
+						
+						
+						
+						
+							<li>
+								<a href="#http" onclick="onNavClick(`#http-nav`)" id="http-nav">
+									HTTP
+								</a>
+							</li>
+						
+						
+					
+				
+			
+				
+				
+					
+						
+						
+						
+						
+						
+							<li>
+								<a href="#%e6%9c%80%e7%ae%80%e9%9d%99%e6%80%81%e8%b5%84%e6%ba%90%e6%9c%8d%e5%8a%a1%e5%99%a8%e5%ad%97%e7%ac%a6%e4%b8%b2" onclick="onNavClick(`#最简静态资源服务器字符串-nav`)" id="最简静态资源服务器字符串-nav">
+									最简静态资源服务器：字符串
+								</a>
+							</li>
+						
+						
+					
+				
+			
+				
+				
+					
+						
+						
+						
+						
+						
+							<li>
+								<a href="#%e6%9c%80%e7%ae%80%e9%9d%99%e6%80%81%e8%b5%84%e6%ba%90%e6%9c%8d%e5%8a%a1%e5%99%a8%e6%96%87%e4%bb%b6" onclick="onNavClick(`#最简静态资源服务器文件-nav`)" id="最简静态资源服务器文件-nav">
+									最简静态资源服务器：文件
+								</a>
+							</li>
+						
+						
+					
+				
+			
+				
+				
+					
+						
+						
+						
+						
+						
+							<li>
+								<a href="#%e4%b8%ba%e4%bb%80%e4%b9%88%e9%9c%80%e8%a6%81%e4%b8%93%e4%b8%9a%e7%9a%84%e9%9d%99%e6%80%81%e8%b5%84%e6%ba%90%e6%9c%8d%e5%8a%a1%e5%99%a8" onclick="onNavClick(`#为什么需要专业的静态资源服务器-nav`)" id="为什么需要专业的静态资源服务器-nav">
+									为什么需要专业的静态资源服务器
+								</a>
+							</li>
+						
+						
+					
+				
+			
+				
+				
+					
+						
+						
+						
+						
+						
+							<li>
+								<a href="#%e9%83%a8%e7%bd%b2%e7%9a%84%e7%ae%80%e5%8d%95%e7%90%86%e8%a7%a3" onclick="onNavClick(`#部署的简单理解-nav`)" id="部署的简单理解-nav">
+									部署的简单理解
+								</a>
+							</li>
+						
+						
+					
+				
+			
+				
+				
+					
+						
+						
+						
+						
+						
+							<li>
+								<a href="#%e8%bf%9b%e6%ad%a5%e6%bc%94%e7%bb%83" onclick="onNavClick(`#进步演练-nav`)" id="进步演练-nav">
+									进步演练
+								</a>
+							</li>
+						
+						
+					
+				
+			
+				
+				
+					
+						
+						
+						
+						
+							
+								
+									<ul>
+								
+							
+						
+						
+							<li>
+								<a href="#%e7%bb%a7%e7%bb%ad%e5%ae%8c%e5%96%84%e9%9d%99%e6%80%81%e8%b5%84%e6%ba%90%e6%9c%8d%e5%8a%a1%e5%99%a8" onclick="onNavClick(`#继续完善静态资源服务器-nav`)" id="继续完善静态资源服务器-nav">
+									继续完善静态资源服务器
+								</a>
+							</li>
+						
+						
+					
+				
+			
+		</ul>
+	</div>
+
+</div>
+    
+    <div class="pagination">
+        <a id="globalBackToTop" class="pagination-action animated-visibility" href="#top" :class="{ invisible: scrollY == 0 }">
+            <i class="material-icons pagination-action-icon">
+                keyboard_arrow_up
+            </i>
+        </a>
+        
+        <a type="button" class="pagination-action" id="darkModeToggleButton">
+            <span class="material-icons pagination-action-icon" id="darkModeToggleIcon">
+                dark_mode
+            </span>
+        </a>
+        
+        
+    </div>
+</div>
+<div class="single-column-drawer-container" id="drawer"
+     v-bind:class="{ 'single-column-drawer-container-active': isDrawerOpen }">
+    <div class="drawer-content">
+        <div class="drawer-menu">
+            
+            
+            
+                
+                
+                
+                    
+                
+                
+                
+                <a class="a-block drawer-menu-item active" href="/posts">
+                    歸檔
+                </a>
+                
+            
+                
+                
+                
+                
+                
+                <a class="a-block drawer-menu-item false" href="/tags">
+                    標簽
+                </a>
+                
+            
+                
+                
+                
+                
+                
+                <a class="a-block drawer-menu-item false" href="/about">
+                    关于
+                </a>
+                
+            
+                
+                
+                
+                
+                
+                <a class="a-block drawer-menu-item false" href="/index.xml">
+                    RSS
+                </a>
+                
+            
+            
+            <div class="toc">
+
+
+	<div class="toc-content">
+	
+		
+		
+		
+		<center>- 目錄 -</center>
+		
+		
+		<ul>
+			
+				
+				
+					
+						
+						
+						
+						
+							
+								
+									<ul>
+								
+							
+						
+						
+							<li>
+								<a href="#%e4%b8%80%e4%b8%aa%e7%ae%80%e5%8d%95%e7%9a%84%e7%bd%91%e9%a1%b5" onclick="onNavClick(`#一个简单的网页-nav`)" id="一个简单的网页-nav">
+									一个简单的网页
+								</a>
+							</li>
+						
+						
+					
+				
+			
+				
+				
+					
+						
+						
+						
+						
+						
+							<li>
+								<a href="#http" onclick="onNavClick(`#http-nav`)" id="http-nav">
+									HTTP
+								</a>
+							</li>
+						
+						
+					
+				
+			
+				
+				
+					
+						
+						
+						
+						
+						
+							<li>
+								<a href="#%e6%9c%80%e7%ae%80%e9%9d%99%e6%80%81%e8%b5%84%e6%ba%90%e6%9c%8d%e5%8a%a1%e5%99%a8%e5%ad%97%e7%ac%a6%e4%b8%b2" onclick="onNavClick(`#最简静态资源服务器字符串-nav`)" id="最简静态资源服务器字符串-nav">
+									最简静态资源服务器：字符串
+								</a>
+							</li>
+						
+						
+					
+				
+			
+				
+				
+					
+						
+						
+						
+						
+						
+							<li>
+								<a href="#%e6%9c%80%e7%ae%80%e9%9d%99%e6%80%81%e8%b5%84%e6%ba%90%e6%9c%8d%e5%8a%a1%e5%99%a8%e6%96%87%e4%bb%b6" onclick="onNavClick(`#最简静态资源服务器文件-nav`)" id="最简静态资源服务器文件-nav">
+									最简静态资源服务器：文件
+								</a>
+							</li>
+						
+						
+					
+				
+			
+				
+				
+					
+						
+						
+						
+						
+						
+							<li>
+								<a href="#%e4%b8%ba%e4%bb%80%e4%b9%88%e9%9c%80%e8%a6%81%e4%b8%93%e4%b8%9a%e7%9a%84%e9%9d%99%e6%80%81%e8%b5%84%e6%ba%90%e6%9c%8d%e5%8a%a1%e5%99%a8" onclick="onNavClick(`#为什么需要专业的静态资源服务器-nav`)" id="为什么需要专业的静态资源服务器-nav">
+									为什么需要专业的静态资源服务器
+								</a>
+							</li>
+						
+						
+					
+				
+			
+				
+				
+					
+						
+						
+						
+						
+						
+							<li>
+								<a href="#%e9%83%a8%e7%bd%b2%e7%9a%84%e7%ae%80%e5%8d%95%e7%90%86%e8%a7%a3" onclick="onNavClick(`#部署的简单理解-nav`)" id="部署的简单理解-nav">
+									部署的简单理解
+								</a>
+							</li>
+						
+						
+					
+				
+			
+				
+				
+					
+						
+						
+						
+						
+						
+							<li>
+								<a href="#%e8%bf%9b%e6%ad%a5%e6%bc%94%e7%bb%83" onclick="onNavClick(`#进步演练-nav`)" id="进步演练-nav">
+									进步演练
+								</a>
+							</li>
+						
+						
+					
+				
+			
+				
+				
+					
+						
+						
+						
+						
+							
+								
+									<ul>
+								
+							
+						
+						
+							<li>
+								<a href="#%e7%bb%a7%e7%bb%ad%e5%ae%8c%e5%96%84%e9%9d%99%e6%80%81%e8%b5%84%e6%ba%90%e6%9c%8d%e5%8a%a1%e5%99%a8" onclick="onNavClick(`#继续完善静态资源服务器-nav`)" id="继续完善静态资源服务器-nav">
+									继续完善静态资源服务器
+								</a>
+							</li>
+						
+						
+					
+				
+			
+		</ul>
+	</div>
+
+</div>
+            
+        </div>
+    </div>
+</div>
+<transition name="fade">
+    <div id="drawer-mask" v-bind:class="{ 'single-column-drawer-mask': mounted }" v-if="isDrawerOpen" v-on:click="toggleDrawer"></div>
+</transition>
+<nav id="navBar" class="navbar sticky-top navbar-light single-column-nav-container">
+    <div id="navBackground" class="nav-background"></div>
+    <div class="container container-narrow nav-content">
+        <button id="nav_dropdown_btn" class="nav-dropdown-toggle" type="button" v-on:click="toggleDrawer">
+            <i class="material-icons">
+                menu
+            </i>
+        </button>
+        <a id="navTitle" class="navbar-brand" href="https://www.nicecorn.com">
+            Corn Park
+        </a>
+        
+        <button type="button" class="nav-darkmode-toggle" id="darkModeToggleButton2">
+            <i class="material-icons" id="darkModeToggleIcon2">
+                dark_mode
+            </i>
+        </button>
+        
+    </div>
+</nav>
+<div class="single-column-header-container" id="pageHead"
+     v-bind:style="{ transform: 'translateZ(0px) translateY('+.3*scrollY+'px)', opacity: 1-navOpacity }">
+    <a href="https://www.nicecorn.com">
+        <div class="single-column-header-title">Corn Park</div>
+        
+        <div class="single-column-header-subtitle">玉之米的自留地</div>
+        
+
+    </a>
+</div>
+
+            <div id="content">
+                <div id="streamContainer" class="stream-container">
+
+    <div class="post-list-container post-list-container-shadow">
+        <div class="post">
+            
+            
+            
+
+            <div class="post-head-wrapper-text-only"
+                
+            >
+                <div class="post-title">
+                    手写最简静态资源服务器
+                    
+                    <div class="post-meta">
+                        
+                        <time itemprop="datePublished">
+                            2022-06-20 00:00
+                        </time>
+                        
+
+                        
+
+                        
+                            <i class="material-icons" style="">label</i>
+                            
+                                <a href="/tags/%E5%89%8D%E7%AB%AF%E9%83%A8%E7%BD%B2">前端部署</a>
+                                &nbsp;
+                            
+                                <a href="/tags/%E5%89%8D%E7%AB%AF">前端</a>
+                                &nbsp;
+                            
+                        
+                        
+                    </div>
+                </div>
+            </div>
+            
+            <div class="post-body-wrapper">
+                
+                <div class="post-body" v-pre>
+                
+                    <h2 id="一个简单的网页">一个简单的网页</h2>
+<p>在开始部署一个静态资源服务器之前，我们需要先写一个简单的网页供浏览。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-html" data-lang="html"><span style="display:flex;"><span><span style="color:#75715e">&lt;!DOCTYPE html&gt;</span>
+</span></span><span style="display:flex;"><span>&lt;<span style="color:#f92672">html</span> <span style="color:#a6e22e">lang</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;en&#34;</span>&gt;
+</span></span><span style="display:flex;"><span>  &lt;<span style="color:#f92672">head</span>&gt;
+</span></span><span style="display:flex;"><span>    &lt;<span style="color:#f92672">meta</span> <span style="color:#a6e22e">charset</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;UTF-8&#34;</span> /&gt;
+</span></span><span style="display:flex;"><span>    &lt;<span style="color:#f92672">meta</span> <span style="color:#a6e22e">http-equiv</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;X-UA-Compatible&#34;</span> <span style="color:#a6e22e">content</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;IE=edge&#34;</span> /&gt;
+</span></span><span style="display:flex;"><span>    &lt;<span style="color:#f92672">meta</span> <span style="color:#a6e22e">name</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;viewport&#34;</span> <span style="color:#a6e22e">content</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;width=device-width, initial-scale=1.0&#34;</span> /&gt;
+</span></span><span style="display:flex;"><span>    &lt;<span style="color:#f92672">title</span>&gt;Hello World&lt;/<span style="color:#f92672">title</span>&gt;
+</span></span><span style="display:flex;"><span>  &lt;/<span style="color:#f92672">head</span>&gt;
+</span></span><span style="display:flex;"><span>  &lt;<span style="color:#f92672">body</span>&gt;
+</span></span><span style="display:flex;"><span>    &lt;<span style="color:#f92672">h1</span>&gt; hello, world &lt;/<span style="color:#f92672">h1</span>&gt;
+</span></span><span style="display:flex;"><span>  &lt;/<span style="color:#f92672">body</span>&gt;
+</span></span><span style="display:flex;"><span>&lt;/<span style="color:#f92672">html</span>&gt;
+</span></span></code></pre></div><h2 id="http">HTTP</h2>
+<p>HTTP 即超文本传输协议，是一个用于传输超文本文档（例如 HTML）的应用层协议。客户端打开一个连接以发送请求，然后等待直到收到服务器响应。最简部署即客户端向服务器发送一个 HTML 文件请求，服务器响应一段 HTML 资源。</p>
+<p>在浏览器中访问任意网页，可以自行查看网页的 HTTP 请求和响应报文。</p>
+<h2 id="最简静态资源服务器字符串">最简静态资源服务器：字符串</h2>
+<p>作为前端，我们使用 <code>node</code> 来搭建静态资源服务。该服务中，监听 <code>3000</code> 端口，在响应体中返回上文的网页。</p>
+<p>首先以字符串返回响应。</p>
+<p>在 <code>node</code> 中，写服务端的最重要模块为 <code>node:http</code>。通过 <code>node:</code> 前缀，可以指明其为内部模块，避免 <code>node</code> 内置模块与第三方模块的命名冲突。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-js" data-lang="js"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">http</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">require</span>(<span style="color:#e6db74">&#39;node:http&#39;</span>);
+</span></span></code></pre></div><p>通过 <code>http.createServer</code> 可以向外提供 HTTP 服务。<code>res.end()</code> 可以设置 HTTP 报文的响应体。我们先简单响应一个字符串。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-js" data-lang="js"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">server</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">http</span>.<span style="color:#a6e22e">createServer</span>((<span style="color:#a6e22e">req</span>, <span style="color:#a6e22e">res</span>) =&gt; {
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">res</span>.<span style="color:#a6e22e">end</span>(<span style="color:#e6db74">&#39;hello world&#39;</span>);
+</span></span><span style="display:flex;"><span>});
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">server</span>.<span style="color:#a6e22e">listen</span>(<span style="color:#ae81ff">3000</span>, () =&gt; {
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">&#39;server running at 3000&#39;</span>);
+</span></span><span style="display:flex;"><span>});
+</span></span></code></pre></div><p>运行服务，在浏览器里打开 <code>3000</code> 端口。</p>
+<p><img src="/img/2022-06-20_12-58-25.png" alt=""></p>
+<p>将网页内容作为字符串传入，就可以使用 <code>res.end()</code> 来响应报文。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-js" data-lang="js"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">html</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">`
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">&lt;!DOCTYPE html&gt;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">&lt;html lang=&#34;en&#34;&gt;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  &lt;head&gt;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    &lt;meta charset=&#34;UTF-8&#34; /&gt;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    &lt;meta http-equiv=&#34;X-UA-Compatible&#34; content=&#34;IE=edge&#34; /&gt;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    &lt;meta name=&#34;viewport&#34; content=&#34;width=device-width, initial-scale=1.0&#34; /&gt;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    &lt;title&gt;Hello World&lt;/title&gt;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  &lt;/head&gt;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  &lt;body&gt;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    &lt;h1&gt; hello, world &lt;/h1&gt;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  &lt;/body&gt;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">&lt;/html&gt;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">`</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">server</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">http</span>.<span style="color:#a6e22e">createServer</span>((<span style="color:#a6e22e">req</span>, <span style="color:#a6e22e">res</span>) =&gt; {
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">res</span>.<span style="color:#a6e22e">end</span>(<span style="color:#a6e22e">html</span>);
+</span></span><span style="display:flex;"><span>});
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">server</span>.<span style="color:#a6e22e">listen</span>(<span style="color:#ae81ff">3000</span>, () =&gt; {
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">&#39;server running at 3000&#39;</span>);
+</span></span><span style="display:flex;"><span>});
+</span></span></code></pre></div><p>查看响应头及响应体。</p>
+<p><img src="/img/2022-06-20_13-08-23.png" alt=""></p>
+<p>至此，一个最简单的静态资源服务部署成功。</p>
+<h2 id="最简静态资源服务器文件">最简静态资源服务器：文件</h2>
+<p>然而，前端资源总是以文件而并非字符串的形式出现。接下来就使用文件系统读取资源并将数据返回。</p>
+<p>使用 <code>node:fs</code> 内置模块来读取文件内容。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-js" data-lang="js"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">fs</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">require</span>(<span style="color:#e6db74">&#39;node:fs&#39;</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">html</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">fs</span>.<span style="color:#a6e22e">readFileSync</span>(<span style="color:#e6db74">&#39;./index.html&#39;</span>);
+</span></span></code></pre></div><p>再使用 <code>res.end()</code> 响应该文件。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-js" data-lang="js"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">http</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">require</span>(<span style="color:#e6db74">&#39;node:http&#39;</span>);
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">fs</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">require</span>(<span style="color:#e6db74">&#39;node:fs&#39;</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">html</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">fs</span>.<span style="color:#a6e22e">readFileSync</span>(<span style="color:#e6db74">&#39;./index.html&#39;</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">server</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">http</span>.<span style="color:#a6e22e">createServer</span>((<span style="color:#a6e22e">req</span>, <span style="color:#a6e22e">res</span>) =&gt; {
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">res</span>.<span style="color:#a6e22e">end</span>(<span style="color:#a6e22e">html</span>);
+</span></span><span style="display:flex;"><span>});
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">server</span>.<span style="color:#a6e22e">listen</span>(<span style="color:#ae81ff">3000</span>, () =&gt; {
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">&#39;server running at 3000&#39;</span>);
+</span></span><span style="display:flex;"><span>});
+</span></span></code></pre></div><p>启动服务，成功运行。</p>
+<h2 id="为什么需要专业的静态资源服务器">为什么需要专业的静态资源服务器</h2>
+<p>我们可以自己手写静态服务器，那为什么还需要如 <code>nginx</code> 之类的专业静态资源服务器呢？因为对于前端这类纯静态资源，自己写代码无论从开发还是性能而言都是极差的。</p>
+<ol>
+<li>对开发而言，基本的 <code>rewrite</code>、<code>redirect</code> 功能都需要重新开发。完备的静态资源服务器需要满足的功能都需要开发的情况下，增加了我们的开发负担。</li>
+<li>对性能而言，单纯地使用文件系统读取文件后返回响应的性能并不高，我们需要使用其他方法来尽可能地提升静态服务器的性能。比如使用 <code>ReadStream</code> 读取文件流的方法。<code>JavaScript</code> 的性能始终有限，使用专业的静态资源服务器拥有更佳的性能。</li>
+</ol>
+<p><code>nginx</code> 也能实现很多必要的功能，如反向代理、<code>TLS</code>、<code>GZIP</code>、<code>HTTP2</code> 等；同时，因为 <code>npm run dev</code> 命令往往需要进行文件的监听并重启服务，会消耗较大的内存及 CPU，所以也不推荐使用这种方式来作为服务的部署。</p>
+<h2 id="部署的简单理解">部署的简单理解</h2>
+<p>简单来说，只要服务运行后能够通过 IP 加端口的方式进行访问那就是部署成功。如果有一台具备公网 IP 的服务器，那么部署在上面所有人都能访问到服务了。</p>
+<h2 id="进步演练">进步演练</h2>
+<h3 id="继续完善静态资源服务器">继续完善静态资源服务器</h3>
+<p>我们继续完善最简静态资源服务，优化性能。使其基于 <code>stream</code>，并能给出正确的 <code>content-length</code>。</p>
+<p>首先，使用文件读取流读取文件并通过 <code>pipe</code> 响应。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-js" data-lang="js"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">server</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">http</span>.<span style="color:#a6e22e">createServer</span>((<span style="color:#a6e22e">req</span>, <span style="color:#a6e22e">res</span>) =&gt; {
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">fs</span>.<span style="color:#a6e22e">createReadStream</span>(<span style="color:#e6db74">&#39;./index.html&#39;</span>).<span style="color:#a6e22e">pipe</span>(<span style="color:#a6e22e">res</span>);
+</span></span><span style="display:flex;"><span>});
+</span></span></code></pre></div><p>运行服务，查看响应头，可以看到该网页已经使用分块的形式进行发送。</p>
+<p><img src="/img/2022-06-20_13-29-23.png" alt=""></p>
+<p>读取文件信息后，再向响应头写入 <code>Content-length</code>。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:2;-o-tab-size:2;tab-size:2;"><code class="language-js" data-lang="js"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">http</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">require</span>(<span style="color:#e6db74">&#39;node:http&#39;</span>);
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">fs</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">require</span>(<span style="color:#e6db74">&#39;node:fs&#39;</span>);
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">fsp</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">require</span>(<span style="color:#e6db74">&#39;node:fs/promises&#39;</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">server</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">http</span>.<span style="color:#a6e22e">createServer</span>(<span style="color:#66d9ef">async</span> (<span style="color:#a6e22e">req</span>, <span style="color:#a6e22e">res</span>) =&gt; {
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">fileStat</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">await</span> <span style="color:#a6e22e">fsp</span>.<span style="color:#a6e22e">stat</span>(<span style="color:#e6db74">&#39;./index.html&#39;</span>);
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">res</span>.<span style="color:#a6e22e">setHeader</span>(<span style="color:#e6db74">&#39;Content-Length&#39;</span>, <span style="color:#a6e22e">fileStat</span>.<span style="color:#a6e22e">size</span>);
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">fs</span>.<span style="color:#a6e22e">createReadStream</span>(<span style="color:#e6db74">&#39;./index.html&#39;</span>).<span style="color:#a6e22e">pipe</span>(<span style="color:#a6e22e">res</span>);
+</span></span><span style="display:flex;"><span>});
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">server</span>.<span style="color:#a6e22e">listen</span>(<span style="color:#ae81ff">3000</span>, () =&gt; {
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">&#39;server running at 3000&#39;</span>);
+</span></span><span style="display:flex;"><span>});
+</span></span></code></pre></div><p>运行服务，查看响应头，已经成功设置 <code>Content-length</code>。但发现 <code>Transfer-Encoding</code> 消失。难道 <code>stream</code> 已经不是通过分块的方式传输了吗？</p>
+<p><img src="/img/2022-06-20_14-33-48.png" alt=""></p>
+<p>答：其实 <code>stream</code> 还是以分块的形式传播，只不过不是 <code>Transfer-Encoding: chunked</code> 这种编码格式。由于 <code>chunked</code> 每次还要传输 <code>length</code> 和 <code>\r\n</code> 作为每一段的标识，因此 <code>Content-Lengh</code> 与其相比的编码格式更小。</p>
+
+                    
+                    <HR width="100%" id="EOF">
+		    <p style="color:#777;">上次修改於 2022-06-20</p>
+                    
+                </div>
+            </div>
+            
+            
+            <nav class="post-pagination">
+
+                
+                <a class="newer-posts" href="https://www.nicecorn.com/posts/javascript/%E6%95%B0%E7%BB%84%E5%8E%BB%E9%87%8D/">
+			下回<br>数组去重
+                </a>
+                
+                
+                
+                <a class="older-posts" href="https://www.nicecorn.com/posts/css/%E6%B0%B4%E5%B9%B3%E5%9E%82%E7%9B%B4%E5%B1%85%E4%B8%AD%E5%B8%B8%E8%A7%81%E6%96%B9%E6%B3%95/">
+			上回<br>水平垂直居中常见方法
+                </a>
+                
+            </nav>
+            <div class="post-comment-wrapper">
+                
+
+
+
+
+
+
+
+
+
+
+            </div>
+        </div>
+    </div>
+
+
+                    </div>
+            </div><div id="single-column-footer">
+
+
+&copy;  Corn Huang
+<a href="https://beian.miit.gov.cn/">粤 ICP 备 20026972 号 - 1</a>
+
+</div>
+            </div>
+    
+    <script src="/js/journal.js"></script>
+    </body>
+</html>
