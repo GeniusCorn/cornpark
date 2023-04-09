@@ -1,4 +1,4 @@
-baseURL = "https://www.nicecorn.com"
+baseURL = "https://blog.nicecorn.com"
 DefaultContentLanguage = "zh-hant" # Theme's display language, supports: en, fr, zh, zh-hant
 languageCode = "zh-hant"
 title = "Corn Park"
