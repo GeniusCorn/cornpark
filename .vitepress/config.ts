@@ -6,7 +6,7 @@ export default defineConfig({
   description: '玉之米的自留地',
 
   cleanUrls: true,
-  lastUpdated: true,
+  // lastUpdated: true,
 
   themeConfig: {
     // https://vitepress.dev/reference/default-theme-config
