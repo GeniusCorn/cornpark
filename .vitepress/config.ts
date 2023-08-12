@@ -265,6 +265,10 @@ function sidebarXiuxing() {
           text: '3. IOC 机制',
           link: '/修行/Nest 通关/3. IOC 机制',
         },
+        {
+          text: '5. 全局模块和生命周期',
+          link: '/修行/Nest 通关/5. 全局模块和生命周期',
+        },
       ],
     },
 
