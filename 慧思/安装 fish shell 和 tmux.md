@@ -24,6 +24,6 @@
 
 在根目录下新建 `tmux` 配置文件 `.tmux.conf`，并写入：
 
-```conf
+```txt
 set -g default-shell "/usr/bin/fish"
 ```
