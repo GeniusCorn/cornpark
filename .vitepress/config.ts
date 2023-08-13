@@ -269,6 +269,10 @@ function sidebarXiuxing() {
           text: '5. 全局模块和生命周期',
           link: '/修行/Nest 通关/5. 全局模块和生命周期',
         },
+        {
+          text: '6. AOP 架构',
+          link: '/修行/Nest 通关/6. AOP 架构',
+        },
       ],
     },
 
