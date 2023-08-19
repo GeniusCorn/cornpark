@@ -273,6 +273,10 @@ function sidebarXiuxing() {
           text: '6. AOP 架构',
           link: '/修行/Nest 通关/6. AOP 架构',
         },
+        {
+          text: '7. 装饰器',
+          link: '/修行/Nest 通关/7. 装饰器',
+        },
       ],
     },
 
