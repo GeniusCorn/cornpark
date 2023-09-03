@@ -103,6 +103,10 @@ function nav() {
 function sidebarJingdu() {
   return [
     {
+      text: '为什么选择 Tailwind CSS',
+      link: '/精读/为什么选择 Tailwind CSS',
+    },
+    {
       text: '在 Vue 中使用 Composition API 解构 Props',
       link: '/精读/在 Vue 中使用 Composition API 解构 Props',
     },
