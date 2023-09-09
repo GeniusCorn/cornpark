@@ -281,6 +281,10 @@ function sidebarXiuxing() {
           text: '7. 装饰器',
           link: '/修行/Nest 通关/7. 装饰器',
         },
+        {
+          text: '8. 切换不同上下文',
+          link: '/修行/Nest 通关/8. 切换不同上下文',
+        },
       ],
     },
 
