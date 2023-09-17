@@ -289,6 +289,10 @@ function sidebarXiuxing() {
           text: '9. 自定义装饰器',
           link: '/修行/Nest 通关/9. 自定义装饰器',
         },
+        {
+          text: '13. 如何切换到 Fastify ',
+          link: '/修行/Nest 通关/13. 如何切换到 Fastify',
+        },
       ],
     },
 
