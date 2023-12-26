@@ -103,6 +103,10 @@ function nav() {
 function sidebarJingdu() {
   return [
     {
+      text: '用现代的方法深拷贝 JavaScript 中的对象',
+      link: '/精读/用现代的方法深拷贝 JavaScript 中的对象',
+    },
+    {
       text: '为什么选择 Tailwind CSS',
       link: '/精读/为什么选择 Tailwind CSS',
     },
